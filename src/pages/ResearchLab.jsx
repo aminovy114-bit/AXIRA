@@ -1,0 +1,28 @@
+import { useState } from "react";
+import { Atom, BookOpenCheck, Clipboard, Lightbulb, Plus, Search, Trash2 } from "lucide-react";
+
+export default function ResearchLab() {
+  const [question, setQuestion] = useState("");
+  const [notes, setNotes] = useState("");
+  const [saved, setSaved] = useState(false);
+  const [ideas, setIdeas] = useState(["How can AI support learning without replacing critical thinking?", "What makes a source trustworthy?"]);
+  const addIdea = () => { if (question.trim()) { setIdeas([question.trim(), ...ideas]); setQuestion(""); setSaved(false); } };
+  const removeIdea = (index) => setIdeas(ideas.filter((_, i) => i !== index));
+  const copyNotes = () => { if (navigator.clipboard && notes) navigator.clipboard.writeText(notes).catch(() => {}); };
+  return (
+    <div className="space-y-8">
+      <section className="relative overflow-hidden rounded-3xl border border-violet-300/10 bg-gradient-to-r from-[#17152b] via-[#0d1525] to-[#0b1724] p-6 sm:p-8"><div className="absolute -right-5 -top-16 h-56 w-56 rounded-full border border-violet-300/[0.08]" /><div className="relative max-w-2xl"><span className="inline-flex items-center gap-2 rounded-full border border-violet-300/15 bg-violet-300/[0.07] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-violet-200"><Atom size={13} /> Research workspace</span><h2 className="mt-4 text-2xl font-semibold tracking-tight text-white sm:text-3xl">Good research begins with a better question.</h2><p className="mt-3 text-sm leading-6 text-slate-400">Collect questions, record observations, and organize the ideas you want to investigate further.</p></div></section>
+      <div className="grid gap-5 xl:grid-cols-[0.9fr_1.1fr]">
+        <section className="rounded-2xl border border-white/[0.07] bg-[#0c1321] p-5 sm:p-6"><div className="flex items-center gap-3"><span className="grid h-10 w-10 place-items-center rounded-xl bg-violet-300/10 text-violet-200"><Lightbulb size={19} /></span><div><h3 className="font-semibold text-white">Question bank</h3><p className="mt-1 text-xs text-slate-500">Save questions worth investigating.</p></div></div>
+          <div className="mt-5 flex gap-2"><input value={question} onChange={(e) => setQuestion(e.target.value)} onKeyDown={(e) => e.key === "Enter" && addIdea()} placeholder="Write a research question..." className="min-w-0 flex-1 rounded-xl border border-white/10 bg-[#080d18] px-3.5 py-3 text-xs text-white outline-none placeholder:text-slate-600 focus:border-violet-300/30" /><button onClick={addIdea} className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-violet-300 text-[#111020] hover:bg-violet-200" aria-label="Add research question"><Plus size={18} /></button></div>
+          <div className="mt-5 space-y-2">{ideas.map((idea, i) => <div key={`${idea}-${i}`} className="group flex items-start gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] p-3.5"><span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-violet-300/10 text-[10px] text-violet-200">{String(i + 1).padStart(2, "0")}</span><p className="flex-1 text-xs leading-5 text-slate-300">{idea}</p><button onClick={() => removeIdea(i)} className="text-slate-700 opacity-100 transition hover:text-rose-300 sm:opacity-0 sm:group-hover:opacity-100" aria-label="Remove question"><Trash2 size={14} /></button></div>)}</div>
+        </section>
+        <section className="rounded-2xl border border-white/[0.07] bg-[#0c1321] p-5 sm:p-6"><div className="flex items-center justify-between gap-3"><div className="flex items-center gap-3"><span className="grid h-10 w-10 place-items-center rounded-xl bg-cyan-300/10 text-cyan-200"><BookOpenCheck size={19} /></span><div><h3 className="font-semibold text-white">Research notes</h3><p className="mt-1 text-xs text-slate-500">Record evidence, context, and next steps.</p></div></div><button onClick={copyNotes} className="rounded-lg border border-white/10 p-2 text-slate-500 hover:text-cyan-200" title="Copy notes"><Clipboard size={15} /></button></div>
+          <textarea value={notes} onChange={(e) => { setNotes(e.target.value); setSaved(false); }} placeholder={"Research question:\n\nWhat I know:\n\nEvidence and sources:\n\nAlternative explanations:\n\nNext steps:"} className="mt-5 min-h-[260px] w-full resize-y rounded-xl border border-white/[0.07] bg-[#080d18] p-4 text-sm leading-6 text-slate-300 outline-none placeholder:text-slate-700 focus:border-cyan-300/25" />
+          <div className="mt-4 flex items-center justify-between gap-3"><span className="text-[10px] text-slate-600">{notes.length} characters · local draft</span><button onClick={() => setSaved(true)} className="rounded-xl bg-cyan-300 px-4 py-2.5 text-xs font-bold text-[#07111d] hover:bg-cyan-200">Mark as reviewed</button></div>{saved && <p className="mt-3 text-xs text-emerald-300">Marked as reviewed in this session.</p>}
+        </section>
+      </div>
+      <section className="rounded-2xl border border-white/[0.07] bg-[#0c1321] p-5 sm:p-6"><h3 className="font-semibold text-white">A reliable research workflow</h3><div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">{[{ n:"01", t:"Ask", d:"Write one focused, answerable question." },{ n:"02", t:"Investigate", d:"Look for relevant, credible sources." },{ n:"03", t:"Evaluate", d:"Check evidence, assumptions, and limits." },{ n:"04", t:"Synthesize", d:"Explain what you learned in your own words." }].map((s) => <div key={s.n} className="rounded-xl border border-white/[0.06] p-4"><span className="text-[10px] font-bold text-violet-300">{s.n}</span><h4 className="mt-2 text-sm font-semibold text-slate-200">{s.t}</h4><p className="mt-2 text-xs leading-5 text-slate-500">{s.d}</p></div>)}</div></section>
+    </div>
+  );
+}
